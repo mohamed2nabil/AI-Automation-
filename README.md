@@ -1,257 +1,116 @@
-# 🤖 AI Automation Projects Portfolio
+# 🤖 Mohamed Nabil – AI Automation & Intelligent Workflows
 
-A collection of advanced AI automation workflows and intelligent chatbots built with n8n, showcasing multi-agent orchestration, natural language processing, and API integrations.
+Hi! I’m Mohamed, a **Data Analyst & Machine Learning Engineer** who builds smart, real-world automation systems that actually work — not just demos.  
+I specialize in turning messy workflows into clean, intelligent pipelines using **n8n** as my core engine, backed by AI, APIs, and solid data logic.
 
----
-
-## 📁 Projects Overview
-
-### 1. 🏥 WhatsApp Medical Support Bot
-**Platform**: Watcher Bot (WhatsApp Business API)  
-**Language**: Arabic  
-**Nodes**: 263 interactive flow nodes
-
-#### Features
-- **Bilingual Support**: Professional medical terminology in Arabic
-- **Smart User Routing**: Categorizes current vs. prospective customers
-- **Device Support**: CGM (Continuous Glucose Monitoring) troubleshooting
-  - PGM device support
-  - CGM sensor installation guidance
-  - Performance monitoring
-- **Location Services**: Routes to 10+ service branches across Saudi Arabia
-- **Video Tutorials**: Direct links to installation guides
-- **Live Escalation**: Seamless handoff to human support
-
-#### Capabilities
-- Sensor performance diagnostics (accuracy, falling off, connectivity)
-- Automated replacement process with 4-reading comparison protocol
-- Regional coverage: Riyadh, Dammam, Jeddah, Makkah, and more
-- 70% reduction in support response time
-- 80% automation rate for common inquiries
-
-#### Tech Stack
-- WhatsApp Business API
-- Visual Flow Builder (263 nodes)
-- Keyword-based triggers
-- 50+ conditional decision branches
+> “The real magic isn’t in the model… it’s in how you connect it to people.”
 
 ---
 
-### 2. 💬 Facebook Messenger AI Chatbot
-**Platform**: n8n + Facebook Messenger  
-**AI Model**: Google Gemini (PaLM API)
+## 🏆 Projects (Ranked by Impact)
 
-#### Features
-- **AI-Driven Conversations**: Powered by Google Gemini
-- **Context Memory**: Maintains conversation history (last 5 messages)
-- **Smart Escalation**: Routes complex queries to WhatsApp (+201145252173)
-- **Programming Focus**: Specialized for beginner developers
+### 1. 🎯 Multi-Agent WhatsApp Orchestrator (n8n Core Project)  
+**Platform**: n8n + WhatsApp Business API  
+**AI Models**: Google Gemini + Nvidia Nemotron (via OpenRouter)  
 
-#### Capabilities
-- Programming questions & code explanations
-- Service information
-- Simple troubleshooting
-- Concise responses (max 20 words)
-- Session-based personalization
+This is my flagship project — a **multi-agent AI assistant** that acts like a personal digital team:
 
-#### Technical Architecture
-```
-User Message → Webhook → Text Extraction → AI Agent (Gemini) 
-→ Memory Buffer → Response → Facebook Graph API
-```
+- **Parent Agent**: Understands user input (text, voice, image) and routes tasks intelligently.
+- **4 Specialized Sub-Agents**:
+  - 📧 **Email Agent**: Reads, replies, and manages Gmail (OAuth2 secure).
+  - 📅 **Calendar Agent**: Schedules, checks conflicts, and fetches your events.
+  - 🔍 **Web Search Agent**: Pulls live news from Hacker News or summarizes Wikipedia.
+  - 🐦 **Social Agent**: Writes & posts AI-generated tweets, logs them in Sheets.
 
-#### Performance
-- Response Time: <2 seconds
-- User Satisfaction: 85%+
-- Secure webhook validation
+✅ Built entirely in **n8n** — no external servers.  
+✅ Fully stateful: remembers context across messages.  
+✅ Designed for scale: adding new agents takes <15 minutes.
+
+> This project shows I don’t just *use* n8n — I **architect with it**.
 
 ---
 
-### 3. 🎯 Multi-Agent WhatsApp Orchestrator
-**Platform**: n8n  
-**AI Models**: OpenRouter (Nvidia Nemotron), Google Gemini  
-**Architecture**: 1 Parent + 4 Specialized Sub-Agents
+### 2. 🏥 WhatsApp Medical Support Bot (WatchChamp)  
+**Platform**: Watcher Bot | **Language**: Arabic  
 
-#### System Architecture
+A production-grade support bot for a CGM (Continuous Glucose Monitoring) medical device company in Saudi Arabia.
 
-**Parent Agent: Orchestrator**
-- Routes requests to specialized agents
-- Processes text, voice, and images
-- Maintains conversation context
-- Intelligent decision-making with "Think" tool
+- Guides users through sensor installation (with video links).  
+- Routes to nearest branch: Riyadh, Jeddah, Dammam, Makkah, etc.  
+- Handles device troubleshooting & replacement requests.  
+- Automatically distinguishes between **current** and **prospective** customers.
 
-**Sub-Agent 1: E-Mail Agent 📧**
-- Gmail integration (OAuth2)
-- Send, read, delete, reply to emails
-- Mark as read/unread
-- Multi-recipient support
+**Impact**:  
+- ⏱️ 70% faster response time  
+- 🤖 80% of common queries fully automated  
+- 💬 All in natural, professional **Arabic** — no awkward translations.
 
-**Sub-Agent 2: Calendar Agent 📅**
-- Google Calendar integration
-- Create, update, delete events
-- Fetch single/multiple events
-- Date/time conflict resolution
-
-**Sub-Agent 3: Web Search Agent 🔍**
-- Google Search (SerpAPI)
-- Wikipedia lookups
-- Hacker News articles
-- News aggregation & summarization
-
-**Sub-Agent 4: Social Media Agent 🐦**
-- AI-generated Twitter/X posts
-- Google Sheets post tracking
-- Content optimization with hashtags
-- Automated scheduling
-
-#### Example Workflows
-
-**Email Management:**
-```
-"Send email to Sarah about the meeting"
-→ Orchestrator → E-Mail Agent → Gmail API → Confirmation
-```
-
-**Calendar Query:**
-```
-"What's on my calendar tomorrow?"
-→ Orchestrator → Calendar Agent → Google Calendar API
-→ "2 events: 10 AM Project Review, 2 PM Client Call"
-```
-
-**Web Search:**
-```
-"Latest AI news"
-→ Orchestrator → Web Search Agent → Hacker News
-→ Summarized articles
-```
-
-**Social Media:**
-```
-"Post on Twitter: Excited about new product!"
-→ Orchestrator → Social Media Agent → Twitter API
-→ Tweet posted + Saved to Sheets
-```
-
-#### Tech Stack
-- n8n workflow automation
-- OpenRouter API (Nvidia Nemotron-3-Nano)
-- Google Gemini API
-- Gmail, Google Calendar, Google Sheets APIs
-- SerpAPI, Wikipedia API, Hacker News API
-- Facebook Graph API (WhatsApp)
+> هذا المشروع علمّني إن الذكاء مش بس في الكود... ده في فهم العميل وثقافته.
 
 ---
 
-### 4. 📱 Facebook Auto-Posting System
-**Platform**: n8n  
-**AI Model**: Google Gemini  
-**Database**: Google Sheets
+### 3. 💬 Facebook Messenger AI Tutor (n8n + Gemini)  
+A friendly coding helper for beginners on Facebook Messenger.
 
-#### Features
-- **AI Content Generation**: Creates 24 programming posts for beginners
-- **Automated Scheduling**: Posts every 2 hours
-- **Smart Status Tracking**: Pending/Posted workflow
-- **Database Management**: Google Sheets integration
+- Answers programming questions in ≤20 words.  
+- Remembers last 5 messages for context.  
+- Escalates complex issues to WhatsApp (+201145252173).  
+- Powered by **Google Gemini**, deployed via n8n webhook.
 
-#### Workflow
-1. **Content Generation**
-   - AI generates 24 complete posts (50-150 words)
-   - Beginner-friendly programming tips
-   - Engaging questions (15-18 posts)
-   - Relevant emojis
-
-2. **Storage & Scheduling**
-   - Saves to Google Sheets with status "Pending"
-   - Schedule Trigger runs every 2 hours
-   - Fetches oldest pending post
-
-3. **Publishing**
-   - Posts to Facebook via Graph API
-   - Deletes row from sheet after posting
-   - Continuous automated cycle
-
-#### Technical Flow
-```
-Schedule Trigger → AI Agent (Gemini) → Parse JSON
-→ Save to Sheets → Schedule (2hrs) → Fetch Pending
-→ Post to Facebook → Delete Row
-```
-
-#### Content Quality
-- 50-150 words per post
-- Actionable programming tips
-- Encourages engagement
-- Professional & friendly tone
+User satisfaction: **85%+** | Avg. response: **<2 sec**
 
 ---
 
-## 🛠️ Technologies Used
+### 4. 📱 Auto-Posting System for Facebook (n8n)  
+Generates and schedules beginner-friendly programming tips — 24/7.
 
-### Automation & Orchestration
-- n8n Workflow Automation
-- Watcher Bot (WhatsApp)
+- AI writes 24 engaging posts (50–150 words each).  
+- Stores in Google Sheets with “Pending” status.  
+- Posts every 2 hours → auto-deletes after publishing.  
+- Zero manual intervention needed.
 
-### AI & LLMs
-- Google Gemini (PaLM API)
-- OpenRouter (Nvidia Nemotron-3-Nano)
-
-### APIs & Integrations
-- Facebook Graph API (Messenger, Posts, WhatsApp)
-- Gmail API (OAuth2)
-- Google Calendar API (OAuth2)
-- Google Sheets API (OAuth2)
-- SerpAPI (Google Search)
-- Wikipedia API
-- Hacker News API
-- Twitter/X API
-
-### Additional Tools
-- Webhooks & HTTP Requests
-- JSON Parsing & Data Transformation
-- Memory Buffer Management
-- JavaScript Code Execution
+Perfect for growing an educational page while you sleep 😴
 
 ---
 
-## 📊 Key Achievements
+## 🛠️ Tech Stack
 
-- **70% reduction** in customer support response time (WhatsApp Bot)
-- **80% automation** rate for common inquiries
-- **85%+ user satisfaction** across chatbots
-- **Multi-agent coordination** with 4+ specialized agents
-- **24/7 automated** social media posting
-- **Cross-platform** integration (WhatsApp, Messenger, Facebook, Email, Calendar)
-
----
-
-## 🚀 Future Enhancements
-
-- [ ] Voice message processing with speech-to-text
-- [ ] Multi-language support (English + Arabic)
-- [ ] Analytics dashboard for all platforms
-- [ ] Advanced AI models (GPT-4, Claude)
-- [ ] CRM integration (Salesforce, HubSpot)
-- [ ] Sentiment analysis for customer feedback
-- [ ] Image generation for social media posts
+| Category | Tools |
+|--------|-------|
+| **Automation** | n8n (expert), Python scripts |
+| **AI/LLMs** | Google Gemini, OpenRouter (Nemotron), PaLM API |
+| **APIs** | WhatsApp, Facebook Graph, Gmail, Calendar, Sheets, Twitter/X, SerpAPI |
+| **Languages** | Python, JavaScript, SQL, PHP |
+| **Tools** | Git, GitHub, Docker, VS Code, Jupyter |
 
 ---
 
-## 📄 License
+## 📊 Why It Matters
 
-Proprietary - Built by Mohamed Nabil
-
----
-
-## 📧 Contact
-
-**Mohamed Nabil**  
-AI Automation Specialist  
-📱 +201145252173  
-📧 mohamed2nabil5@gmail.com  
-🔗 [LinkedIn](https://linkedin.com/in/mohamed-nabil-41047a223)  
-💻 [GitHub](https://github.com/mohamed2nabil)
+- Every project here is **live**, **on GitHub**, and **solves a real problem**.  
+- I blend **data thinking**, **automation logic**, and **user empathy** — not just code.  
+- My strength? Turning **chaotic human requests** into **structured, reliable workflows**.
 
 ---
 
-**Note**: These projects demonstrate expertise in AI agent orchestration, workflow automation, API integration, and building production-ready intelligent systems.
+## 🚀 What’s Next?
+
+- Voice message processing (speech-to-text in n8n)  
+- CRM integrations (HubSpot, Salesforce)  
+- Bilingual agents (Arabic + English)  
+- Analytics dashboard for all bots
+
+---
+
+## 📬 Let’s Talk
+
+I’m looking to join a team that values **practical intelligence** over flashy demos.
+
+- 📱 WhatsApp: [+201145252173](https://wa.me/201145252173)  
+- 📧 Email: mohamed2nabil5@gmail.com  
+- 🔗 [LinkedIn](https://linkedin.com/in/mohamed-nabil-41047a223)  
+- 💻 [GitHub](https://github.com/mohamed2nabil)
+
+---
+
+> “I’m not looking for a job. I’m looking for a problem worth solving.”
