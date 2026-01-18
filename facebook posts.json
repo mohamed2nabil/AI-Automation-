@@ -1,0 +1,412 @@
+{
+  "name": "facebook posts",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "612a450d-ce7f-4ebb-a70b-4cc711eca15d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert Social Media Content Generator for Facebook, specializing in programming topics for beginner developers.\n\nYOUR TASK:\nGenerate exactly 24 complete, ready-to-post Facebook posts in English. Each post should be designed for beginners and early-level developers.\n\nPOST REQUIREMENTS:\n- Write FULL posts, not just ideas or titles\n- Length: 50-150 words per post\n- Tone: Friendly, encouraging, beginner-friendly\n- Content: Programming tips, concepts, best practices, beginner mistakes, quick tutorials, or motivation\n- IMPORTANT: End most posts (at least 15-18 out of 24) with an engaging question related to the topic to encourage comments\n- Use simple language - avoid complex jargon\n- Include relevant emojis where appropriate (but don't overuse)\n- Make posts actionable and valuable\n\nOUTPUT FORMAT:\nReturn ONLY a JSON array with 24 objects. Each object must have:\n{\n  \"post_number\": 1,\n  \"content\": \"the full post text here...\"\n}\n\nEXAMPLE:\n[\n  {\n    \"post_number\": 1,\n    \"content\": \"💡 Beginner Tip: Always use meaningful variable names!\\n\\nInstead of:\\nint x = 5;\\n\\nWrite:\\nint userAge = 5;\\n\\nYour future self (and your teammates) will thank you! Clear code is maintainable code. 🚀\\n\\nWhat's the worst variable name you've ever seen in code? 😄\"\n  },\n  {\n    \"post_number\": 2,\n    \"content\": \"...\"\n  }\n]\n\nGenerate all 24 posts now. Return ONLY the JSON array, no additional text.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "44d2ea90-f782-4eeb-8210-d57d1c8d9f66",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0",
+          "mode": "list",
+          "cachedResultName": "faceboke",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "الورقة1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "the thought": "={{ $json['the thought'] }}",
+            "states": "={{ $json.status }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "the thought",
+              "displayName": "the thought",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "states",
+              "displayName": "states",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "photo",
+              "displayName": "photo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        0
+      ],
+      "id": "7bf227e0-b92c-499b-977e-9f6500da1041",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4cMqKz5LDDzVoNrq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "2c893670-8b51-44ab-8de6-52424a6feb16",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "48WPnfozhK65klr9",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. استلام المخرجات من الـ AI\nconst rawData = $input.item.json.output; \nlet postsArray = [];\n\ntry {\n    // محاولة تحويل النص إلى JSON بشكل مباشر\n    postsArray = JSON.parse(rawData);\n} catch (e) {\n    // في حال قام الـ AI بكتابة نص قبل أو بعد الـ JSON (مثل ```json)\n    // نقوم باستخراج المصفوفة فقط باستخدام Regex\n    const jsonMatch = rawData.match(/\\[[\\s\\S]*\\]/);\n    if (jsonMatch) {\n        try {\n            postsArray = JSON.parse(jsonMatch[0]);\n        } catch (innerError) {\n            postsArray = [];\n        }\n    }\n}\n\n// 2. تحويل البيانات إلى Items يفهمها n8n مع مراعاة أسماء أعمدة الشيت\nreturn postsArray.map((item, index) => {\n    return {\n        json: {\n            \"id\": index + 1,\n            // ملاحظة: تم استخدام المسافة هنا \"the thought\" لتطابق رأس العمود في الشيت عندك\n            \"the thought\": item.content || item.the_full_post_text_here, \n            \"status\": \"Pending\" \n        }\n    };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "d2bf84aa-e1d0-4fc1-b0dc-149b7a0c806b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "745163905340082",
+        "edge": "feed",
+        "allowUnauthorizedCerts": true,
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $json.message }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        896,
+        464
+      ],
+      "id": "35c99bf6-a6d6-437d-8f14-9fe9cf6f288c",
+      "name": "Facebook Graph API",
+      "alwaysOutputData": false,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "7Wz0ARLQXN5bbNQd",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            },
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        464
+      ],
+      "id": "9d3eaba8-ed39-4c1e-a3e2-8b2ea57b7664",
+      "name": "Schedule Trigger1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0",
+          "mode": "list",
+          "cachedResultName": "faceboke",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "الورقة1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "states",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        464
+      ],
+      "id": "9bbac8cb-d665-4813-b233-5f0196e8a328",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4cMqKz5LDDzVoNrq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. جلب كل الصفوف القادمة من جوجل شيت\nconst allPosts = $input.all();\n\n// 2. التحقق من وجود بيانات\nif (allPosts.length === 0) {\n    throw new Error(\"لا توجد بوستات في القائمة!\");\n}\n\n// 3. البحث عن أول بوست حالته \"Pending\"\n// ملاحظة: تأكد أن اسم العمود في الشيت هو states (كما في صورتك)\nconst pendingPosts = allPosts.filter(item => item.json[\"states\"] === \"Pending\");\n\nif (pendingPosts.length === 0) {\n    throw new Error(\"تم نشر جميع البوستات، لا يوجد شيء بانتظار النشر!\");\n}\n\n// 4. اختيار أول بوست في القائمة (الأقدم) لنشره\nconst selectedPost = pendingPosts[0];\n\n// 5. إرجاع البيانات لنود الفيسبوك ولنود التحديث لاحقاً\nreturn {\n  json: {\n    row_number: selectedPost.json[\"row_number\"], // رقم الصف في الشيت (مهم جداً للتحديث)\n    message: selectedPost.json[\"the thought\"],    // نص البوست\n    id: selectedPost.json[\"id\"]                  // معرف البوست\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        464
+      ],
+      "id": "5979ad96-2657-475e-86e6-fb86a9148fbf",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0",
+          "mode": "list",
+          "cachedResultName": "faceboke",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "الورقة1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mrotm5lyVhtydxpzf36rOfvZDZfW-0yTXqd40P51tF0/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        464
+      ],
+      "id": "4d8baa1b-5465-4501-bdd1-edd7527592a5",
+      "name": "Delete rows or columns from sheet",
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4cMqKz5LDDzVoNrq",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ee8d7b88-da84-4502-b36c-0c8533c1a6ec",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "910611afce3162180971ae487eba928bb55933be7b8d2b6af1ee54fe343471a2"
+  },
+  "id": "5ODXFaztX1BENNsE",
+  "tags": []
+}
