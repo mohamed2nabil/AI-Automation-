@@ -1,0 +1,1314 @@
+{
+  "name": "1st proj",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "2870c87e-82a6-4a24-a86a-a4c55a9225d9",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        1264,
+        512
+      ],
+      "webhookId": "ccba06ce-2121-43c0-80f0-cd77f60f3130",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "THgHcslBQEYTWiFG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "elevenLabsApiKey",
+              "type": "string",
+              "value": "YOUR_ELEVENLABS_API_KEY"
+            },
+            {
+              "id": "id-2",
+              "name": "elevenLabsVoiceId",
+              "type": "string",
+              "value": "YOUR_VOICE_ID"
+            },
+            {
+              "id": "id-3",
+              "name": "falApiKey",
+              "type": "string",
+              "value": "YOUR_FAL_API_KEY"
+            },
+            {
+              "id": "id-5",
+              "name": "scriptMaxDuration",
+              "type": "number",
+              "value": 30
+            },
+            {
+              "id": "id-6",
+              "name": "perplexityModel",
+              "type": "string",
+              "value": "sonar"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "41a44991-a52f-4186-8dec-16f6ccc4faa8",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1552,
+        512
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "photoUrl",
+              "type": "string",
+              "value": "={{ $json.message.photo ? $json.message.photo[$json.message.photo.length - 1].file_id : '' }}"
+            },
+            {
+              "id": "id-2",
+              "name": "theme",
+              "type": "string",
+              "value": "={{ $json.message.caption || $json.message.text || 'viral content' }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "985914cd-27e0-4a14-8f51-3da7b4e7a35b",
+      "name": "Extract Photo and Theme",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1904,
+        512
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "model": "={{ $('Workflow Configuration').first().json.perplexityModel }}",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ \n  \"Find the top 3 current viral trends related to: \" + $('Extract Photo and Theme').item.json.message.caption + \n  \". Focus on trending topics, hashtags, and content styles that are performing well on TikTok right now. \" + \n  \"Be specific and actionable. Limit your response strictly to 3 results only — no more.\" \n}}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "id": "dd85cdf3-6acc-4758-b9d3-1bab26125361",
+      "name": "Search Trends with Perplexity",
+      "type": "n8n-nodes-base.perplexity",
+      "position": [
+        1264,
+        720
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "perplexityApi": {
+          "id": "zSw3gJspFvZwsdxG",
+          "name": "Perplexity account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Based on these trends: {{ $json.choices[0].message.content }}\n\nCreate a viral TikTok script about: {{ $('Extract Photo and Theme').first().json.theme }}\n\nWORD COUNT REQUIREMENT: You must write between 50-60 words. Not 20 words, not 80 words - exactly 50 to 60 words.\n\nWhy 50-60 words? Because at natural speaking pace (2.5-3 words per second), this creates a 20-second video.\n\nSCRIPT REQUIREMENTS:\n- Hook: Start with an attention-grabbing first sentence\n- Body: 2-3 engaging sentences about the topic\n- Ending: Strong call-to-action or question\n- Language: Arabic (conversational and natural)\n- NO special characters, emojis, hashtags, or formatting\n\nIMPORTANT: After writing, count your words. If you have less than 50 or more than 60, rewrite.\n\nOutput ONLY the script text, nothing else."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "610387e3-8f6c-4ceb-b66c-f2311a216259",
+      "name": "Generate Script with GPT-4",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1504,
+        720
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "zMeIGvMnEnb5xCfb",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/jqSVxVfzLl9ZDba6liR9",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "sk_ec6db8de3ac750734af358e61f91be059259be407e969347"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "audio/mpeg"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"text\": \"Sample text to convert to speech\",\n  \"model_id\": \"eleven_monolingual_v1\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.75\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "audio"
+            }
+          }
+        }
+      },
+      "id": "a2b3c398-d8d8-429a-9a74-dfc4234798dc",
+      "name": "ElevenLabs Voice Synthesis",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1856,
+        720
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/veed/fabric-1.0",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key 5c95ceb0-b757-402b-8b25-41b1855b08b2:dca29860d2949f85627a53ea4e054c5c"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \n  \"image_url\": $('Build Public Image URL').first().json.data.url.replace(/^http:\\/\\/tmpfiles\\.org\\/(\\d+)\\/(.*)$/i, 'https://tmpfiles.org/dl/$1/$2'), \n  \"audio_url\": $json.data.url.replace(/^http:\\/\\/tmpfiles\\.org\\/(\\d+)\\/(.*)$/i, 'https://tmpfiles.org/dl/$1/$2'), \n  \"resolution\": \"480p\",\n  \"duration\": 30\n} }}",
+        "options": {}
+      },
+      "id": "02e11c5b-d6b9-4c4e-aee5-f68c9fd216d4",
+      "name": "FAL.ai Video Generation",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1264,
+        928
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Create an engaging TikTok caption for a video about: {{ $('Extract Photo and Theme').first().json.theme }}\n\nBased on these trends: {{ $('Search Trends with Perplexity').first().json.choices[0].message.content }}\n\nRequirements:\n- Catchy hook in first line\n- Include 5-8 relevant trending hashtags\n- Keep it concise and engaging\n- Optimize for TikTok algorithm\n- Return ONLY the caption text with hashtags, nothing else"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "572053f5-c2e2-4454-b2f8-c31bcceb986e",
+      "name": "Generate Caption with GPT-4",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1920,
+        928
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "zMeIGvMnEnb5xCfb",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1alFKIBHUggHvtdFjfNct1Cqr2wxji9BamjrJX4i5f1o",
+          "mode": "list",
+          "cachedResultName": "AMR1PROJ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1alFKIBHUggHvtdFjfNct1Cqr2wxji9BamjrJX4i5f1o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "VIDEOS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1alFKIBHUggHvtdFjfNct1Cqr2wxji9BamjrJX4i5f1o/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "IDEA": "={{ $('Extract Photo and Theme').first().json.message.caption }}",
+            "URL IMAGE": "={{ $('Build Public Image URL').first().json.data.url }}",
+            "URL AUDIO": "={{ $('Upload Audio to Public URL').first().json.data.url }}",
+            "URL VIDEO": "={{ $('Download VEED Video').item.json.video.url }}",
+            "STATUS": "={{ $json.message.content }}",
+            "CAPTION": "={{ $('Generate Caption with GPT-4').item.json.message.content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "IDEA",
+              "displayName": "IDEA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL IMAGE",
+              "displayName": "URL IMAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL AUDIO",
+              "displayName": "URL AUDIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL VIDEO",
+              "displayName": "URL VIDEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION",
+              "displayName": "CAPTION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "929570cc-74b8-4a7d-aaff-3b303dab0348",
+      "name": "Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2368,
+        928
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hjET6TmcU5jAgi5Y",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[2].file_id }}",
+        "additionalFields": {}
+      },
+      "id": "5ecbd4f1-d8b5-44a7-b671-7ef29b612955",
+      "name": "Get Photo File from Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2144,
+        512
+      ],
+      "webhookId": "466a3150-51b2-422e-841b-79f03d9a7317",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "THgHcslBQEYTWiFG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tmpfiles.org/api/v1/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "audio_mp3"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "0d06342a-4973-4096-acd4-f8deaa4d3360",
+      "name": "Upload Audio to Public URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2368,
+        720
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const b = item.binary?.audio;            // <-- ta propriété binaire actuelle\n  if (!b) return item;\n\n  // clone sous un nouveau nom de propriété\n  item.binary.audio_mp3 = {\n    ...b,\n    fileName: (b.fileName || 'audio.mp3').replace(/\\.mpga$/i, '.mp3'),\n    mimeType: 'audio/mpeg'\n  };\n\n  // (optionnel) garder l’original:\n  // delete item.binary.audio;\n\n  return item;\n});\n"
+      },
+      "id": "8babaa0f-2c5e-40bb-804d-508138bff8a4",
+      "name": "Convert .mpga to .mp3",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2096,
+        720
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tmpfiles.org/api/v1/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "8bd012a0-1e03-4d69-bca4-350c0065bca2",
+      "name": "Build Public Image URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2368,
+        512
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "minutes"
+      },
+      "id": "11873626-3cbc-441f-bc72-d5e1fa2f65a7",
+      "name": "Wait for VEED",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1424,
+        928
+      ],
+      "webhookId": "55faa42e-6509-40b5-a589-48c1db44727f",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/veed/fabric-1.0/requests/{{ $json.request_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Workflow Configuration').first().json.falApiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "73fc87ac-459c-4d7f-8874-bbad44c8c1e8",
+      "name": "Download VEED Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1664,
+        928
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "file": "={{ $json['URL VIDEO'] }}",
+        "additionalFields": {}
+      },
+      "id": "035b243a-cc2d-4194-b3f2-e45822ecbf8a",
+      "name": "Send a video",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1232,
+        1152
+      ],
+      "webhookId": "99e9dbe1-08a3-4d7e-8986-f40bb00cc897",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "THgHcslBQEYTWiFG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "mediaUrl": "={{ $('Save to Google Sheets').item.json['URL VIDEO'] }}"
+      },
+      "id": "44cfbfd3-9a62-406e-bdc4-a88ab4ef082c",
+      "name": "Upload Video to BLOTATO",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1408,
+        1152
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "platform": "youtube",
+        "accountId": {
+          "__rl": true,
+          "value": "26100",
+          "mode": "list",
+          "cachedResultName": "trying (trying)",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/26100"
+        },
+        "postContentText": "={{ $('Generate Caption with GPT-4').item.json.message.content }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "postCreateYoutubeOptionTitle": "={{ $('Save to Google Sheets').item.json.IDEA }}",
+        "postCreateYoutubeOptionShouldNotifySubscribers": false,
+        "options": {}
+      },
+      "id": "63e349be-9306-4295-b522-66fa70219197",
+      "name": "Youtube",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1696,
+        1472
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "platform": "tiktok",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "2079",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/2079",
+          "cachedResultName": "elitecybzcs"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "44cc333c-b20b-43ea-81ac-c324117d6737",
+      "name": "Tiktok",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1696,
+        1152
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1alFKIBHUggHvtdFjfNct1Cqr2wxji9BamjrJX4i5f1o",
+          "mode": "list",
+          "cachedResultName": "AMR1PROJ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1alFKIBHUggHvtdFjfNct1Cqr2wxji9BamjrJX4i5f1o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "VIDEOS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1alFKIBHUggHvtdFjfNct1Cqr2wxji9BamjrJX4i5f1o/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "IDEA": "={{ $node[\"Save to Google Sheets\"].json.IDEA }}"
+          },
+          "matchingColumns": [
+            "IDEA"
+          ],
+          "schema": [
+            {
+              "id": "IDEA",
+              "displayName": "IDEA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URL IMAGE",
+              "displayName": "URL IMAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URL AUDIO",
+              "displayName": "URL AUDIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URL VIDEO",
+              "displayName": "URL VIDEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CAPTION",
+              "displayName": "CAPTION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b2cb12fb-ae11-4d82-9d0f-7afbb6b66ed9",
+      "name": "Update Status to \"DONE\"",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2432,
+        1312
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hjET6TmcU5jAgi5Y",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "platform": "linkedin",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1446",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/1446",
+          "cachedResultName": "Samuel Amalric"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "15a31ec9-915f-40f9-bd2c-66eee50074a8",
+      "name": "Linkedin",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        2032,
+        1120
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "platform": "facebook",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1759",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/1759",
+          "cachedResultName": "Firass Ben"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "facebookPageId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "101603614680195",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/1759/subaccounts/101603614680195",
+          "cachedResultName": "Dr. Firas"
+        },
+        "options": {}
+      },
+      "id": "4bcf429e-fe53-41bd-be77-3f4d212b6270",
+      "name": "Facebook",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1840,
+        1168
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1687",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/1687",
+          "cachedResultName": "acces.a.vie"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "cf2ccc40-f8c0-4d44-8797-4b63594e95e7",
+      "name": "Instagram",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1696,
+        1312
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "platform": "threads",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "2280",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/2280",
+          "cachedResultName": "doc.firass"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "727e0958-20b4-40a5-82ce-b7a88b04fb0a",
+      "name": "Threads",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1840,
+        1328
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "platform": "bluesky",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "6012",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/6012",
+          "cachedResultName": "formationinternet.bsky.social"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "6ce39e15-6c7b-4068-9f4f-3609d8ca5048",
+      "name": "Bluesky",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        2032,
+        1280
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "platform": "pinterest",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "363",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/363",
+          "cachedResultName": "formationinternet2022"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "pinterestBoardId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1146658823815436667"
+        },
+        "options": {}
+      },
+      "id": "3a9f4622-1dbd-49c2-8b3b-7c079f67f7ea",
+      "name": "Pinterest",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        2032,
+        1472
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "platform": "twitter",
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1289",
+          "cachedResultUrl": "https://backend.blotato.com/v2/accounts/1289",
+          "cachedResultName": "Docteur_Firas"
+        },
+        "postContentText": "={{ $('Save to Google Sheets').item.json.CAPTION }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "5d871caf-8d9e-48c8-8dcf-e4cced811ec4",
+      "name": "Twitter (X)",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        1840,
+        1488
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "hYSaCw9qxWoi1aJJ",
+          "name": "Blotato account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "numberInputs": 9
+      },
+      "id": "a9d80b89-54af-4006-b137-f1353d8dfb56",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2256,
+        1216
+      ],
+      "typeVersion": 3.2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Update Status to \"DONE\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiktok": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bluesky": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Threads": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Youtube": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Facebook": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Linkedin": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Instagram": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Pinterest": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Twitter (X)": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Send a video": {
+      "main": [
+        [
+          {
+            "node": "Upload Video to BLOTATO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for VEED": {
+      "main": [
+        [
+          {
+            "node": "Download VEED Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download VEED Video": {
+      "main": [
+        [
+          {
+            "node": "Generate Caption with GPT-4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert .mpga to .mp3": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio to Public URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Public Image URL": {
+      "main": [
+        [
+          {
+            "node": "Search Trends with Perplexity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Extract Photo and Theme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Photo and Theme": {
+      "main": [
+        [
+          {
+            "node": "Get Photo File from Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAL.ai Video Generation": {
+      "main": [
+        [
+          {
+            "node": "Wait for VEED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video to BLOTATO": {
+      "main": [
+        [
+          {
+            "node": "Tiktok",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Linkedin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instagram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Twitter (X)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Youtube",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Threads",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Bluesky",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pinterest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs Voice Synthesis": {
+      "main": [
+        [
+          {
+            "node": "Convert .mpga to .mp3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Script with GPT-4": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs Voice Synthesis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Audio to Public URL": {
+      "main": [
+        [
+          {
+            "node": "FAL.ai Video Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Caption with GPT-4": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Photo File from Telegram": {
+      "main": [
+        [
+          {
+            "node": "Build Public Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Trends with Perplexity": {
+      "main": [
+        [
+          {
+            "node": "Generate Script with GPT-4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c5265990-0e3c-4666-acc6-71f0a1f6d591",
+  "meta": {
+    "templateId": "10000",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6fdb15573a3d09a46434d135bfb383a457086263693331419cdf422b3a2196f7"
+  },
+  "id": "mS4Ghex7NR-p4UlOnuMp9",
+  "tags": []
+}

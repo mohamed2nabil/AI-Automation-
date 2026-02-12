@@ -1,0 +1,429 @@
+{
+  "name": "images",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "60d6ce7b-9f23-40f4-9ba5-1078425a94b6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional prompt engineer for FLUX Pro image generation AI.\n\n**CRITICAL RULES:**\n1. FLUX Pro CANNOT generate clear Arabic text inside images - the text will be distorted\n2. NEVER ask the model to write Arabic words, verses, or calligraphy IN the image\n3. Instead, focus on creating a beautiful Islamic-themed background WITHOUT text\n\n**Your Task:**\nGenerate a detailed FLUX Pro prompt for creating a beautiful Ramadan/Islamic themed image that will be used as a background. The user will add Arabic text LATER using graphic design tools.\n\n**The prompt MUST:**\n- Focus on Islamic atmosphere: mosques, crescent moon, lanterns, stars, Arabian architecture\n- Describe lighting, colors, mood (peaceful, spiritual, warm golden tones)\n- Include artistic style: digital art, photorealistic, watercolor, etc.\n- Be detailed about composition and visual elements\n- Include technical specs: \"8k, ultra detailed, masterpiece, professional photography\"\n- **NEVER mention ANY text, calligraphy, or writing to be included in the image**\n\n**Example Good Prompt:**\n\"A serene Ramadan night scene with a glowing crescent moon in a starry purple-pink gradient sky. In the foreground, an ornate golden Islamic lantern (fanoos) with intricate geometric patterns emits warm light. Silhouettes of mosque domes and minarets in the background. Soft bokeh lights, peaceful atmosphere, ultra detailed, 8k masterpiece, cinematic lighting, professional photography style.\"\n\n**User Input:** \nThe Arabic text is: {{INPUT_TEXT}}\n\n**Now create a professional FLUX Pro prompt focusing ONLY on the visual background elements, NOT on generating the Arabic text.**",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "19c717a7-66e0-4011-b0bb-0ff67eed8cb1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "2e5d04fa-5cba-4a90-91f8-20b7704e6c86",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "9B14wBmCXjN0c5G2",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        304,
+        256
+      ],
+      "id": "4de3b0af-b3a5-4acf-959a-4cd776a5df34",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "58FPnIG6FpkFS4al",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "medonabil283@gmail.com",
+          "mode": "list",
+          "cachedResultName": "medonabil283@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        240
+      ],
+      "id": "3f9c1c66-8bba-49a7-9a7d-12c793299be2",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "cfvRpoy9xFomVWZu",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-image",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-image (Nano Banana)"
+        },
+        "prompt": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        -176
+      ],
+      "id": "15afb514-52a8-4809-ba34-b7f9e18cd346",
+      "name": "Generate an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "9B14wBmCXjN0c5G2",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.bfl.ai/v1/get_result",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-key",
+              "value": "bfl_oREWRjq99V4Sd8iVWtgBn2B8afjXaiK2"
+            },
+            {
+              "name": "x-key",
+              "value": "={{ $json.api_key || \"bfl_KurzEJGzIATHQl52glyoBq9ednUc3bfY\" }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        736,
+        0
+      ],
+      "id": "360b753e-7c4f-42fc-b196-5e4a1502ab06",
+      "name": "get the image"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bfl.ai/v1/flux-pro-1.1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-key",
+              "value": "={{ $json.api_key || \"bfl_KurzEJGzIATHQl52glyoBq9ednUc3bfY\" }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"prompt\": $json.output,\n  \"width\": 1024,\n  \"height\": 1024,\n  \"aspect_ratio\": \"1:1\",\n  \"output_format\": \"png\",\n  \"safety_tolerance\": 5\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        544,
+        0
+      ],
+      "id": "2957e1e9-138c-484f-aafe-76b663d6109d",
+      "name": "generat"
+    },
+    {
+      "parameters": {
+        "url": "={{ $node[\"get the image\"].json[\"result\"][\"sample\"] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "57a63360-f6ed-4f17-b707-5c9672062539",
+      "name": "Download Image",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "18UheC2Og-Wou0JcFiUugNPcNlcMCM6a2",
+          "mode": "list",
+          "cachedResultName": "ramadan",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/18UheC2Og-Wou0JcFiUugNPcNlcMCM6a2"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1504,
+        160
+      ],
+      "id": "c894be76-3480-4e31-950b-2eb35ef1f25d",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "h0pY6Or3l5zkI0f4",
+          "name": "Google Drive account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "962279940303991",
+        "edge": "photos",
+        "allowUnauthorizedCerts": true,
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -96
+      ],
+      "id": "443c10d7-fde4-441f-90cd-e4ce31b8a0c8",
+      "name": "Facebook Graph API",
+      "alwaysOutputData": false,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "H5HjLaSEXuwY9PwB",
+          "name": "6odays"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        0
+      ],
+      "id": "a164299f-e153-4100-9162-c9665f547459",
+      "name": "Wait",
+      "webhookId": "d191256a-4d08-4128-b7cf-52872bbbb778"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "generat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generat": {
+      "main": [
+        [
+          {
+            "node": "get the image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get the image": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook Graph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        []
+      ]
+    },
+    "Facebook Graph API": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3c0718b3-d54e-4a62-95d9-d5bb3cb748c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "48a6ae45e3251e13fc0616f5c56533cf588a081ec5572b83e9d626f954b4bbf2"
+  },
+  "id": "RRTQkcaASMAvWPx-Eu9W6",
+  "tags": []
+}
