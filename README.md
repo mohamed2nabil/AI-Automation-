@@ -30,46 +30,47 @@ This is my flagship project — a **multi-agent AI assistant** that acts like a 
 
 ---
 
-### 2. 🏥 WhatsApp Medical Support Bot (WatchChamp)  
+### 2. 🎬 Viral TikTok Auto-Creator (Visual Automation)
+**Platform**: n8n + FAL.ai (VEED Fabric 1.0) + ElevenLabs  
+
+Automating the entire video production cycle from trend to post:
+- **Trend Hunter**: Uses Perplexity AI to find what's viral right now.
+- **AI Production**: Generates talking-head videos using VEED.io (via FAL.ai) with perfectly synced AI audio.
+- **Omni-Channel**: Automatically publishes to TikTok, YouTube, and Instagram via Blotato.
+
+---
+
+### 3. 📸 Instagram Smart Lead Agent (Meta API)
+**Platform**: n8n + Meta Graph API + Gemini 2.0  
+
+Turning social media comments into business opportunities:
+- **Lead Scoring**: AI analyzes comments to filter "General" feedback from high-intent "LEADs".
+- **Instant Response**: Auto-replies to comments and sends personalized DMs instantly.
+- **Notification**: Real-time Telegram alerts for every new hot lead.
+
+---
+
+### 4. 🏥 WhatsApp Medical Support Bot (WatchChamp)  
 **Platform**: Watcher Bot | **Language**: Arabic  
 
 A production-grade support bot for a CGM (Continuous Glucose Monitoring) medical device company in Saudi Arabia.
 
-- Guides users through sensor installation (with video links).  
-- Routes to nearest branch: Riyadh, Jeddah, Dammam, Makkah, etc.  
-- Handles device troubleshooting & replacement requests.  
-- Automatically distinguishes between **current** and **prospective** customers.
+- Guides users through sensor installation (with video links).
+- Routes to nearest branch: Riyadh, Jeddah, Dammam, Makkah, etc.
+- Handles device troubleshooting & replacement requests.
 
 **Impact**:  
-- ⏱️ 70% faster response time  
-- 🤖 80% of common queries fully automated  
-- 💬 All in natural, professional **Arabic** — no awkward translations.
-
-> هذا المشروع علمّني إن الذكاء مش بس في الكود... ده في فهم العميل وثقافته.
+- ⏱️ 70% faster response time.
+- 🤖 80% of common queries fully automated.
 
 ---
 
-### 3. 💬 Facebook Messenger AI Tutor (n8n + Gemini)  
-A friendly coding helper for beginners on Facebook Messenger.
+### 5. 💬 Facebook Messenger AI Tutor (n8n + Gemini)  
+A friendly coding helper for beginners on the "Code every minute" page.
 
-- Answers programming questions in ≤20 words.  
-- Remembers last 5 messages for context.  
-- Escalates complex issues to WhatsApp (+201145252173).  
-- Powered by **Google Gemini**, deployed via n8n webhook.
-
-User satisfaction: **85%+** | Avg. response: **<2 sec**
-
----
-
-### 4. 📱 Auto-Posting System for Facebook (n8n)  
-Generates and schedules beginner-friendly programming tips — 24/7.
-
-- AI writes 24 engaging posts (50–150 words each).  
-- Stores in Google Sheets with “Pending” status.  
-- Posts every 2 hours → auto-deletes after publishing.  
-- Zero manual intervention needed.
-
-Perfect for growing an educational page while you sleep 😴
+- Answers programming questions in ≤20 words.
+- Remembers conversation context using n8n memory nodes.
+- Escalates complex issues to human support via WhatsApp.
 
 ---
 
@@ -77,40 +78,16 @@ Perfect for growing an educational page while you sleep 😴
 
 | Category | Tools |
 |--------|-------|
-| **Automation** | n8n (expert), Python scripts |
-| **AI/LLMs** | Google Gemini, OpenRouter (Nemotron), PaLM API |
-| **APIs** | WhatsApp, Facebook Graph, Gmail, Calendar, Sheets, Twitter/X, SerpAPI |
-| **Languages** | Python, JavaScript, SQL, PHP |
-| **Tools** | Git, GitHub, Docker, VS Code, Jupyter |
-
----
-
-## 📊 Why It Matters
-
-- Every project here is **live**, **on GitHub**, and **solves a real problem**.  
-- I blend **data thinking**, **automation logic**, and **user empathy** — not just code.  
-- My strength? Turning **chaotic human requests** into **structured, reliable workflows**.
-
----
-
-## 🚀 What’s Next?
-
-- Voice message processing (speech-to-text in n8n)  
-- CRM integrations (HubSpot, Salesforce)  
-- Bilingual agents (Arabic + English)  
-- Analytics dashboard for all bots
+| **Automation** | n8n (expert), Python scripts, Meta APIs |
+| **AI/LLMs** | Google Gemini, GPT-4o, Nvidia Nemotron, ElevenLabs |
+| **Media AI** | FAL.ai (VEED.io), Blotato, Tmpfiles API |
+| **Languages** | Python, JavaScript, SQL, PHP, Java |
 
 ---
 
 ## 📬 Let’s Talk
 
-I’m looking to join a team that values **practical intelligence** over flashy demos.
-
 - 📱 WhatsApp: [+201145252173](https://wa.me/201145252173)  
 - 📧 Email: mohamed2nabil5@gmail.com  
 - 🔗 [LinkedIn](https://linkedin.com/in/mohamed-nabil-41047a223)  
 - 💻 [GitHub](https://github.com/mohamed2nabil)
-
----
-
-> “I’m not looking for a job. I’m looking for a problem worth solving.”
