@@ -1,0 +1,365 @@
+{
+  "name": "Instagram AI Agent (Using Meta API) | ApexPartner AI",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"comment_id\": \"{{ $('Deduplication').item.json.comment_id }}\"\n  },\n  \"message\": {\n    \"text\": \"أهلاً بك يا {{ $('Deduplication').item.json.from.username }} رأيت اهتمامك في التعليقات، وأرسلت لك هذه الرسالة هنا لمناقشة كل التفاصيل بشكل أوسع. ما هو هدفك الأساسي الذي تسعى لتحقيقه؟\"\n  },\n  \"messaging_type\": \"RESPONSE\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2368,
+        144
+      ],
+      "id": "1938935f-40b0-40e6-a331-144a8fcd60e9",
+      "name": "SEND Private Message",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "PFg3oWJBHrAKanva",
+          "name": "dssdf"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "b8e50c89-cdfd-4144-ad5d-9b08b6116445",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        752,
+        208
+      ],
+      "id": "b83ac910-562a-4f56-9f22-c6002648afd3",
+      "name": "Webhook",
+      "webhookId": "b8e50c89-cdfd-4144-ad5d-9b08b6116445"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2862ebad-c50c-4b7d-821d-f84bef19e482",
+              "leftValue": "={{ $json.body.entry[0].changes[0].value.from.username }}",
+              "rightValue": "=karim.adel.coach",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        432
+      ],
+      "id": "6c5c960f-6298-4cd4-862b-c39aae776b56",
+      "name": "Filter for not respond to myself",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $('Deduplication').item.json.comment_id }}/replies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": \"أهلاً بك {{ $('Deduplication').item.json.from.username }}! شكراً جزيلاً لاهتمامك. فريقنا سيقوم بالتواصل معك على الخاص فوراً لمشاركة كل التفاصيل.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2128,
+        432
+      ],
+      "id": "07039310-8951-4b98-aa9f-6f3663b1113e",
+      "name": "Reply on Comment",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "PFg3oWJBHrAKanva",
+          "name": "dssdf"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1104,
+        48
+      ],
+      "id": "e861ff6f-92ab-4a62-9b58-d3051a07335c",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "49e5f356-8d7e-4485-9827-5b8eb227e7ea",
+              "leftValue": "={{ $json.content.parts[0].text }}",
+              "rightValue": "LEAD",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1904,
+        160
+      ],
+      "id": "e529ec22-cf55-420c-aa46-a8ee4e8cca00",
+      "name": "LEAD check"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=أنت ذكاء اصطناعي متخصص في تحليل نية العملاء لمدرب أعمال. قم بتحليل التعليق التالي على منشور انستغرام. هل يعبر المستخدم عن اهتمام جاد، أو يسأل عن السعر، أو التفاصيل، أو كيفية البدء؟ أجب بكلمة واحدة فقط: 'LEAD' إذا كان فرصة محتملة، أو 'GENERAL' إذا كان تعليقًا عاديًا.\nالتعليق: {{ $json.orig_body.entry[0].changes[0].value.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        400
+      ],
+      "id": "d6c9a255-d3a5-403a-9f29-34d3d98c1989",
+      "name": "Gemini AI",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hesc59oBSCpOq3Lm",
+          "name": "Google Gemini Api account | mu.rezkk@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// التحقق من وجود body (POST request فقط)\nif (!$json.body) {\n  console.log('⚠️ No body found - probably GET request');\n  return [];\n}\n\nconst body = $json.body;\n\n// التحقق من صحة البيانات\nif (!body?.entry?.[0]?.changes?.[0]?.value?.id) {\n  console.log('❌ No valid comment data');\n  return [];\n}\n\n// استخراج بيانات الكومنت\nconst commentId = body.entry[0].changes[0].value.id;\nconst commentText = body.entry[0].changes[0].value.text;\nconst fromUser = body.entry[0].changes[0].value.from;\n\n// إدارة التكرار باستخدام Workflow Static Data\nconst store = $getWorkflowStaticData('global');\nstore.processedComments = store.processedComments || {};\n\nconst now = Date.now();\nconst ttl = 30 * 60 * 1000; // 30 دقيقة (زيادة الوقت للأمان)\n\n// تنظيف السجلات القديمة (أكثر من 30 دقيقة)\nObject.keys(store.processedComments).forEach(id => {\n  if (now - store.processedComments[id] > ttl) {\n    delete store.processedComments[id];\n  }\n});\n\n// فحص إذا تم معالجة الكومنت من قبل\nif (store.processedComments[commentId]) {\n  const secondsAgo = Math.floor((now - store.processedComments[commentId]) / 1000);\n  console.log(`🛑 DUPLICATE DETECTED! Comment ${commentId} was processed ${secondsAgo}s ago - STOPPING`);\n  return [];\n}\n\n// تسجيل الكومنت كمعالج\nstore.processedComments[commentId] = now;\nconsole.log(`✅ Processing NEW comment ${commentId}`);\nconsole.log(`   Text: \"${commentText}\" | From: @${fromUser.username}`);\n\n// إرجاع البيانات المنسقة\nreturn [{\n  json: {\n    comment_id: commentId,\n    text: commentText,\n    from: fromUser,\n    timestamp: body.entry[0].time,\n    orig_body: body\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        208
+      ],
+      "id": "705f3ad2-9f2b-4f7d-b6e4-7dbd5bd97595",
+      "name": "Deduplication"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 640,
+        "width": 2096,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        704,
+        0
+      ],
+      "id": "d4a24114-1da4-409e-91cf-3fc18114d817",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "🧠 Important Setup Guidelines\n\nProject: Instagram AI Agent (System Demo of n8n + Meta API)\n\nVersion: v1.0 | Muhmmed Rezk | ApexPartner AI\n\n⚙️ قبل التشغيل\n1. افتح n8n وانتقل إلى Credentials ↳ HTTP Bearer Auth\n -  أنشئ Credential جديدة باسم Instagram_API\n -  في الخانة ضع القيمة:\n  Bearer <YOUR_PAGE_ACCESS_TOKEN>\n\n2. افتح Meta Developers ↳ Dashboard > App > Basic ↳\n تأكد إنك حاطط:\n - \"Privacy Policy URL\"\n - \"Data Deletion Instructions URL\"\n (ملفين جاهزين مذكورين في وصف الفيديو).\n\n3. اربط عقدة Telegram (اختياري لكن مهم):\n ↳ Telegram > Send Message\n -  أنشئ Bot من BotFather ↳ انسخ API Token\n -  احصل على Chat ID من getUpdates\n -  ضع البيانات في Connection جديدة باسم Telegram_Notifier.\n\n🪄 الترتيب المنطقي للعُقد (Workflow)\n1. Webhook (INSTAGRAM → n8n) – يستقبل الكومنتات.\n2. Filter – للتأكد إنك مش بترد على نفسك.\n3. Deduplication (Code) – يمنع تكرار الرد.\n4. Gemini AI (Node) – تحليل نية الكومنت.\n5. If (LEAD) – يكمل المسار للعملاء المهتمين فقط.\n6. Reply to Comment + Send DM.\n7. Telegram Notification (Optional) – يبلغك بأي Lead جديد.\n\n💬 الرسائل المستخدمة\nرد على الكومنت:\n\"أهلاً بك {{ username }} 👋، تمام، شُفت تعليقك وردّيت لك على الخاص علشان نتكلم بالتفصيل ❤️.\"﻿\n\nرسالة الـ DM:\n\"أهلاً بك يا {{ username }} رأيت اهتمامك في التعليقات، وبعت لك الرسالة دي هنا علشان نفهم هدفك الأساسي ونبدأ من هناك.\"﻿\n\nروابط القنوات والمتابعة\n- YouTube: https://www.youtube.com/@MRezk-AI\n- LinkedIn: https://www.linkedin.com/in/mu-rezk/\n\n📂 ملفات المستخدم والوثائق: مذكورة أسفل وصف الفيديو أو داخل الـ Drive Folder المرفق.\n\nتنبيهات سريعة\n- لو الـ Webhook ما اشتغلش من أول مرة، اعمل \"Execute Workflow\" يدويًا ثم جرب كومنت جديد.\n- تأكد إن التطبيق في Meta على وضع Live وليس Development.\n- احفظ الـ Workflow وسمّه Instagram_AI_Agent_v1 قبل التشارك.",
+        "height": 992,
+        "width": 608
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "66faec6f-6262-4e20-835a-5dcd799a7725",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chatId": "610142372",
+        "text": "=🎯 عميل مهتم جديد\n\n👤 الاسم: @{{ $('Deduplication').item.json.orig_body.entry[0].changes[0].value.from.username }}\n💬 التعليق: {{ $('Deduplication').item.json.orig_body.entry[0].changes[0].value.text }}\n\n🔗 تم التواصل معه ورد السيستم عليه بنجاح.",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2592,
+        400
+      ],
+      "id": "43dc9b6d-7a86-4efa-9db0-bff2286cdf1b",
+      "name": "Telegram  Notifier",
+      "webhookId": "2b575eee-0222-4d4f-818f-d806710b9d4d",
+      "credentials": {
+        "telegramApi": {
+          "id": "SOTPD1mL5CT2CGtS",
+          "name": "Telegram 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter for not respond to myself",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter for not respond to myself": {
+      "main": [
+        [
+          {
+            "node": "Deduplication",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply on Comment": {
+      "main": [
+        [
+          {
+            "node": "SEND Private Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LEAD check": {
+      "main": [
+        [
+          {
+            "node": "Reply on Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini AI": {
+      "main": [
+        [
+          {
+            "node": "LEAD check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplication": {
+      "main": [
+        [
+          {
+            "node": "Gemini AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEND Private Message": {
+      "main": [
+        [
+          {
+            "node": "Telegram  Notifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "721bac03-124e-4ba9-afdb-2f18428c6f3f",
+  "meta": {
+    "instanceId": "dc9aa5c7b289ca305df8370a1be9329f92a09c556e07ca7045462c3f8ca36e62"
+  },
+  "id": "hDG5Mje5CWVtWdfM",
+  "tags": []
+}
